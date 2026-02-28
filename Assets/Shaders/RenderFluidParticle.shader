@@ -44,11 +44,19 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
     
             struct v2g {};
             
+            float hash11(uint n)
+            {
+                n = (n << 13U) ^ n;
+                n = n * (n * n * 15731U + 789221U) + 1376312589U;
+                return float(n & 0x7fffffffU) / float(0x7fffffff);
+            }
+
             struct g2f
             {
                 float4 pos : SV_Position;
                 float3 viewPos : VIEWPOS;
                 float2 uv : TEXCOORD0;
+                float4 customColor : COLOR;
                 SHADOW_COORDS(1)
             };
             
@@ -70,6 +78,16 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
             {
                 uint index = _Indices[id];
                 float3 particleWorldPos = _Points[index].xyz;
+                
+                float randVal = hash11(index);
+                float4 particleColor;
+                if (randVal < 0.333) {
+                    particleColor = float4(1.0, 1.0, 0.0, 1.0);
+                } else if (randVal < 0.666) {
+                    particleColor = float4(0.0, 1.0, 0.0, 1.0);
+                } else {
+                    particleColor = float4(1.0, 0.0, 0.0, 1.0);
+                }
             
                 float3 particleViewPos = mul(UNITY_MATRIX_V, float4(particleWorldPos, 1));
             
@@ -97,6 +115,7 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
                     o.pos = pos;
                     o.viewPos = viewPos[i];
                     o.uv = uv[i];
+                    o.customColor = particleColor;
                     TRANSFER_SHADOW(o)
                     triStream.Append(o);
                 }
@@ -135,13 +154,13 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
 
                 // Surface data
                 SurfaceOutputStandard surfaceData = (SurfaceOutputStandard)0;
-                surfaceData.Albedo = _Color.rgb;
+                surfaceData.Albedo = i.customColor.rgb;
                 surfaceData.Normal = worldNormal;
                 surfaceData.Emission = 0;
                 surfaceData.Metallic = _Metallic;
                 surfaceData.Smoothness = _Glossiness;
                 surfaceData.Occlusion = 1.0;
-                surfaceData.Alpha = _Color.a;
+                surfaceData.Alpha = i.customColor.a;
 
                 // UnityGI data
                 UnityGI gi = (UnityGI)0;
@@ -216,11 +235,19 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
     
             struct v2g {};
             
+            float hash11(uint n)
+            {
+                n = (n << 13U) ^ n;
+                n = n * (n * n * 15731U + 789221U) + 1376312589U;
+                return float(n & 0x7fffffffU) / float(0x7fffffff);
+            }
+
             struct g2f
             {
                 float4 pos : SV_Position;
                 float3 viewPos : VIEWPOS;
                 float2 uv : TEXCOORD0;
+                float4 customColor : COLOR;
                 SHADOW_COORDS(1)
             };
             
@@ -242,6 +269,16 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
             {
                 uint index = _Indices[id];
                 float3 particleWorldPos = _Points[index].xyz;
+                
+                float randVal = hash11(index);
+                float4 particleColor;
+                if (randVal < 0.333) {
+                    particleColor = float4(1.0, 1.0, 0.0, 1.0);
+                } else if (randVal < 0.666) {
+                    particleColor = float4(0.0, 1.0, 0.0, 1.0);
+                } else {
+                    particleColor = float4(1.0, 0.0, 0.0, 1.0);
+                }
             
                 float3 particleViewPos = mul(UNITY_MATRIX_V, float4(particleWorldPos, 1));
             
@@ -269,6 +306,7 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
                     o.pos = pos;
                     o.viewPos = viewPos[i];
                     o.uv = uv[i];
+                    o.customColor = particleColor;
                     TRANSFER_SHADOW(o)
                     triStream.Append(o);
                 }
@@ -307,13 +345,13 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
 
                 // Surface data
                 SurfaceOutputStandard surfaceData = (SurfaceOutputStandard)0;
-                surfaceData.Albedo = _Color.rgb;
+                surfaceData.Albedo = i.customColor.rgb;
                 surfaceData.Normal = worldNormal;
                 surfaceData.Emission = 0;
                 surfaceData.Metallic = _Metallic;
                 surfaceData.Smoothness = _Glossiness;
                 surfaceData.Occlusion = 1.0;
-                surfaceData.Alpha = _Color.a;
+                surfaceData.Alpha = i.customColor.a;
 
                 UNITY_LIGHT_ATTENUATION(atten, i, worldPos)
 
