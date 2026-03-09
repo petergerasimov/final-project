@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a980ee4454b07744a56ba2d1063e580, type: 3}
   m_Name: PhysXDefaultPBDMaterial 1
   m_EditorClassIdentifier: 
-  m_friction: 0.03
-  m_damping: 0
+  m_friction: 0.6
+  m_damping: 0.5
   m_adhesion: 0
   m_viscosity: 0
   m_vorticityConfinement: 0
   m_surfaceTension: 0
-  m_cohesion: 0.025
+  m_cohesion: 0.01
   m_lift: 0
   m_drag: 0
   m_cflCoefficient: 1
