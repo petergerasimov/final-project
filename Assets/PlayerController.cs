@@ -36,7 +36,8 @@ public class PlayerController : MonoBehaviour
         _xRotation -= mouseY;
         _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
 
-        if (_cameraTransform != null) {
+        if (_cameraTransform != null)
+        {
             _cameraTransform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
         }
         transform.Rotate(Vector3.up * mouseX);
@@ -50,7 +51,8 @@ public class PlayerController : MonoBehaviour
         _rb.AddForce(move.normalized * _speed, ForceMode.VelocityChange);
 
         Vector3 horizontalVelocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
-        if (horizontalVelocity.magnitude > _maxSpeed) {
+        if (horizontalVelocity.magnitude > _maxSpeed)
+        {
             horizontalVelocity = horizontalVelocity.normalized * _maxSpeed;
             _rb.velocity = new Vector3(horizontalVelocity.x, _rb.velocity.y, horizontalVelocity.z);
         }
@@ -68,7 +70,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        if (value.isPressed && Mathf.Abs(_rb.velocity.y) < 0.01f) {
+        if (value.isPressed && Mathf.Abs(_rb.velocity.y) < 0.01f)
+        {
             _rb.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
         }
     }

@@ -81,11 +81,14 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
                 
                 float randVal = hash11(index);
                 float4 particleColor;
-                if (randVal < 0.333) {
+                if (randVal < 0.333) 
+                {
                     particleColor = float4(1.0, 1.0, 0.0, 1.0);
-                } else if (randVal < 0.666) {
+                } else if (randVal < 0.666) 
+                {
                     particleColor = float4(0.0, 1.0, 0.0, 1.0);
-                } else {
+                } else 
+                {
                     particleColor = float4(1.0, 0.0, 0.0, 1.0);
                 }
             
@@ -272,11 +275,14 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
                 
                 float randVal = hash11(index);
                 float4 particleColor;
-                if (randVal < 0.333) {
+                if (randVal < 0.333) 
+                {
                     particleColor = float4(1.0, 1.0, 0.0, 1.0);
-                } else if (randVal < 0.666) {
+                } else if (randVal < 0.666) 
+                {
                     particleColor = float4(0.0, 1.0, 0.0, 1.0);
-                } else {
+                } else 
+                {
                     particleColor = float4(1.0, 0.0, 0.0, 1.0);
                 }
             
