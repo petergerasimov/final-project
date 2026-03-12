@@ -12,5 +12,4 @@ namespace PhysX5ForUnity
             Physics.simulationMode = SimulationMode.FixedUpdate;
         }
     }
-
 }

@@ -10,19 +10,12 @@ public class Breakable : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!collision.gameObject.CompareTag(playerTag))
-        {
-            return;
-        }
+        if (!collision.gameObject.CompareTag(playerTag)) return;
+        if (onlyCountJumpsFromAbove && collision.transform.position.y <= transform.position.y) return;
 
-        if (onlyCountJumpsFromAbove && collision.transform.position.y <= transform.position.y)
-        {
-            return;
-        }
         jumpCount++;
-        if (jumpCount >= requiredJumps)
-        {
-            gameObject.SetActive(false);
-        }
+        if (jumpCount < requiredJumps) return;
+        
+        gameObject.SetActive(false);
     }
 }

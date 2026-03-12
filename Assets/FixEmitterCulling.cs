@@ -16,9 +16,8 @@ public class FixEmitterCulling : MonoBehaviour
 
     void Update()
     {
-        if (m_Renderer != null)
-        {
-            m_Renderer.bounds = m_MassiveBounds;
-        }
+        if (m_Renderer == null) return;
+        
+        m_Renderer.bounds = m_MassiveBounds;
     }
 }
