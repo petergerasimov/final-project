@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: ClothPDBMaterial
   m_EditorClassIdentifier: 
   m_friction: 0.3
-  m_damping: 0.3
+  m_damping: 0.05
   m_adhesion: 0
   m_viscosity: 0
   m_vorticityConfinement: 0
   m_surfaceTension: 0
   m_cohesion: 0
   m_lift: 0
-  m_drag: 0
+  m_drag: 0.1
   m_cflCoefficient: 1
   m_gravityScale: 1
