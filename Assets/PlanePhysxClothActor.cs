@@ -11,6 +11,8 @@ namespace PhysX5ForUnity
     [AddComponentMenu("PhysX 5/Actors/Plane Physx Cloth Actor")]
     public class PlanePhysxClothActor : PhysxParticleActor
     {
+        public string playerTag = "Player";
+
         public int NumSprings
         {
             get { return m_numSprings; }
@@ -66,6 +68,43 @@ namespace PhysX5ForUnity
             }
         }
 
+        private float m_originalInvMass = 1.0f;
+        private bool m_upperHalfReleased = false;
+
+        public void ReleaseUpperHalfBoundary()
+        {
+            Debug.Log("ReleaseUpperHalfBoundary" + m_upperHalfReleased + " " + m_nativeObjectPtr + " " + m_fixBoundary);
+            if (m_upperHalfReleased || m_nativeObjectPtr == IntPtr.Zero || !m_fixBoundary) return;
+            m_upperHalfReleased = true;
+
+            Vector4[] particles = ParticleData.PositionInvMass.ToArray();
+            
+            float minY = float.MaxValue, maxY = float.MinValue;
+            foreach (var particle in particles)
+            {
+                if (particle.y < minY) minY = particle.y;
+                if (particle.y > maxY) maxY = particle.y;
+            }
+            float centerY = (minY + maxY) * 0.5f;
+
+            bool changed = false;
+            for (int i = 0; i < particles.Length; i++)
+            {
+                Vector4 p = particles[i];
+                if (p.w == 0.0f && p.y >= centerY)
+                {
+                    p.w = m_originalInvMass;
+                    ParticleData.SetParticle(i, p, false);
+                    changed = true;
+                }
+            }
+            
+            if (changed)
+            {
+                ParticleData.SyncParticlesSet(true);
+            }
+        }
+
         public void ResetObject()
         {
             if (ParticleData.NativeParticleObjectPtr != IntPtr.Zero)
@@ -92,6 +131,17 @@ namespace PhysX5ForUnity
                 if (m_fixBoundary)
                 {
                     Vector4[] particles = ParticleData.PositionInvMass.ToArray();
+
+                    m_originalInvMass = 1.0f;
+                    foreach (var pt in particles)
+                    {
+                        if (pt.w > 0.0f)
+                        {
+                            m_originalInvMass = pt.w;
+                            break;
+                        }
+                    }
+
                     int[] fixedIndices = FindBoundaryVertexIndices(particles, m_boundaryPointsPerEdge);
 
                     foreach (var i in fixedIndices)
