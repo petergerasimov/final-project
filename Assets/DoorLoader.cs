@@ -84,10 +84,10 @@ public class DoorLoader : DistanceInteractable
         textRect.anchoredPosition = new Vector2(-50, 50);
         textRect.sizeDelta = new Vector2(400, 100);
 
-        // scenes[currentSceneIndex].SetActive(false);
-        // currentSceneIndex = (currentSceneIndex + 1) % scenes.Count;
-        // scenes[currentSceneIndex].SetActive(true);
-        ResetPhysX();
+        scenes[currentSceneIndex].SetActive(false);
+        currentSceneIndex = (currentSceneIndex + 1) % scenes.Count;
+        scenes[currentSceneIndex].SetActive(true);
+        // ResetPhysX();
 
         Destroy(canvasGameObj);
         _isLoading = false;
