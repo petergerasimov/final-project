@@ -1,11 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class DoorLoader : DistanceInteractable
 {
-    public string nextSceneName;
+    public List<GameObject> scenes;
+    public int currentSceneIndex = 0;
 
     private bool _isLoading = false;
 
@@ -15,11 +17,35 @@ public class DoorLoader : DistanceInteractable
         StartCoroutine(LoadNextScene());
     }
 
+    public void ResetPhysX()
+    {
+        PhysX5ForUnity.PhysxActor[] actors = FindObjectsOfType<PhysX5ForUnity.PhysxActor>(true);
+        foreach (var actor in actors)
+        {
+            if (!actor.enabled) continue;
+            switch (actor)
+            {
+                case PhysX5ForUnity.PhysxFluidActor fluidActor:
+                    if (fluidActor.ParticleData != null) fluidActor.ResetObject();
+                    break;
+                case PhysX5ForUnity.PhysxTriangleMeshClothActor clothActor:
+                    if (clothActor.ParticleData != null) clothActor.ResetObject();
+                    break;
+                case PhysX5ForUnity.PhysxFEMSoftBodyActor softBodyActor:
+                    softBodyActor.ResetObject();
+                    break;
+                case PhysX5ForUnity.PhysxArticulationKinematicTree kinematicTree:
+                    kinematicTree.ResetObject();
+                    break;
+            }
+        }
+    }
+
     private IEnumerator LoadNextScene()
     {
-        if (string.IsNullOrEmpty(nextSceneName))
+        if (scenes == null || scenes.Count == 0)
         {
-            Debug.LogWarning("DoorLoader: nextSceneName not specified");
+            Debug.LogWarning("DoorLoader: scenes list is empty");
             yield break;
         }
         _isLoading = true;
@@ -30,7 +56,6 @@ public class DoorLoader : DistanceInteractable
         canvas.sortingOrder = 1000;
         canvasGameObj.AddComponent<CanvasScaler>();
         canvasGameObj.AddComponent<GraphicRaycaster>();
-        DontDestroyOnLoad(canvasGameObj);
 
         GameObject bgGameObj = new GameObject("Background");
         bgGameObj.transform.SetParent(canvasGameObj.transform, false);
@@ -59,14 +84,12 @@ public class DoorLoader : DistanceInteractable
         textRect.anchoredPosition = new Vector2(-50, 50);
         textRect.sizeDelta = new Vector2(400, 100);
 
-        yield return null;
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextSceneName, LoadSceneMode.Single);
-
-        while (!asyncLoad.isDone)
-        {
-            yield return null;
-        }
+        // scenes[currentSceneIndex].SetActive(false);
+        // currentSceneIndex = (currentSceneIndex + 1) % scenes.Count;
+        // scenes[currentSceneIndex].SetActive(true);
+        ResetPhysX();
 
         Destroy(canvasGameObj);
+        _isLoading = false;
     }
 }
