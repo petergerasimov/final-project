@@ -15,10 +15,12 @@ public class DistanceInteractable : MonoBehaviour
     protected virtual void Start()
     {
         _mainCamera = Camera.main;
-        GameObject player = GameObject.FindGameObjectWithTag(targetTag);
-        if (player != null)
+        GameObject[] players = GameObject.FindGameObjectsWithTag(targetTag);
+        foreach (GameObject player in players)
         {
+            if (player.activeSelf == false) continue;
             _playerTransform = player.transform;
+            break;
         }
         _renderer = GetComponent<Renderer>();
     }
