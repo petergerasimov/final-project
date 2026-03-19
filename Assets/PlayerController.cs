@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     private float _lookSensitivity = 0.5f;
     [SerializeField]
     private float _deceleration = 20f;
+    [SerializeField]
+    private float _airDrag = 3f;
 
     [SerializeField]
     private Transform _cameraTransform;
@@ -25,7 +27,10 @@ public class PlayerController : MonoBehaviour
 
     private bool _isGrounded = false;
     private bool _isSliding = false;
+    private bool _isTouchingWall = false;
     private Vector3 _steepNormal = Vector3.zero;
+    private Vector3 _groundNormal = Vector3.up;
+    private Vector3 _wallNormal = Vector3.zero;
 
     private const float _epsilon = 0.001f;
 
@@ -61,6 +66,16 @@ public class PlayerController : MonoBehaviour
         if (moveDir.magnitude > 0)
         {
             AdjustForSlope(ref moveDir);
+
+            if (_isTouchingWall && !_isGrounded)
+            {
+                float dot = Vector3.Dot(moveDir, _wallNormal);
+                if (dot < 0) moveDir -= _wallNormal * dot;
+                if (moveDir.sqrMagnitude > _epsilon) moveDir.Normalize();
+            }
+
+            if (_isGrounded) moveDir = Vector3.ProjectOnPlane(moveDir, _groundNormal).normalized;
+
             _rb.AddForce(moveDir * _speed, ForceMode.VelocityChange);
         }
         else
@@ -68,6 +83,15 @@ public class PlayerController : MonoBehaviour
             Vector3 hVel = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
             hVel = Vector3.MoveTowards(hVel, Vector3.zero, _deceleration * Time.fixedDeltaTime);
             _rb.velocity = new Vector3(hVel.x, _rb.velocity.y, hVel.z);
+        }
+
+        if (!_isGrounded)
+        {
+            Vector3 vel = _rb.velocity;
+            float yVel = vel.y;
+            vel -= vel * _airDrag * Time.fixedDeltaTime;
+            if (yVel < 0f) vel.y = yVel;
+            _rb.velocity = vel;
         }
 
         Vector3 horizontalVelocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
@@ -79,6 +103,9 @@ public class PlayerController : MonoBehaviour
 
         _isGrounded = false;
         _isSliding = false;
+        _isTouchingWall = false;
+        _groundNormal = Vector3.up;
+        _wallNormal = Vector3.zero;
     }
 
     private void AdjustForSlope(ref Vector3 moveDir)
@@ -118,13 +145,22 @@ public class PlayerController : MonoBehaviour
     {
         for (int i = 0; i < collision.contactCount; i++)
         {
-            float angle = Vector3.Angle(Vector3.up, collision.GetContact(i).normal);
+            Vector3 normal = collision.GetContact(i).normal;
+            float angle = Vector3.Angle(Vector3.up, normal);
             if (angle < 45f)
             {
                 _isGrounded = true;
-                break;
+                _groundNormal = normal;
+            }
+            else
+            {
+                _isTouchingWall = true;
+                _wallNormal += normal;
             }
         }
+
+        if (_isTouchingWall)
+            _wallNormal.Normalize();
 
         if (collision.gameObject.CompareTag("Slideable"))
         {
