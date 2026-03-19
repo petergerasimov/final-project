@@ -15,7 +15,7 @@ MonoBehaviour:
   m_friction: 0.3
   m_damping: 0.4
   m_adhesion: 0
-  m_viscosity: 0.4
+  m_viscosity: 1
   m_vorticityConfinement: 0
   m_surfaceTension: 0
   m_cohesion: 0.01
