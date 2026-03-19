@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class EnterRoomInteratable : DistanceInteractable
 {
-    public Transform objectToMove;
-    public Transform destination;
-    public bool once = true;
+    public Transform ObjectToMove;
+    public Transform Destination;
+    public bool IsOneTime = true;
 
     public override void OnInteract()
     {
-        if (objectToMove == null || destination == null) return;
-        objectToMove.position = new Vector3(destination.position.x, destination.position.y, destination.position.z);
+        if (ObjectToMove == null || Destination == null) return;
+        ObjectToMove.position = new Vector3(Destination.position.x, Destination.position.y, Destination.position.z);
 
-        if (once) gameObject.SetActive(false);
+        if (IsOneTime) gameObject.SetActive(false);
     }
 }

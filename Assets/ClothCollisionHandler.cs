@@ -5,12 +5,12 @@ using UnityEngine;
 [RequireComponent(typeof(MeshCollider))]
 public class ClothCollisionHandler : MonoBehaviour
 {
-    public string playerTag = "Player";
-    public float fadeDuration = 5f;
+    public string PlayerTag = "Player";
+    public float FadeDuration = 5f;
 
     private PhysX5ForUnity.PhysxTriangleMeshClothActor m_clothActor;
     private MeshCollider m_collider;
-    private bool m_upperHalfTriggered = false;
+    private bool m_isUpperHalfTriggered;
 
 
     private void Start()
@@ -22,11 +22,11 @@ public class ClothCollisionHandler : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (m_upperHalfTriggered) return;
-        if (!collision.gameObject.CompareTag(playerTag)) return;
+        if (m_isUpperHalfTriggered) return;
+        if (!collision.gameObject.CompareTag(PlayerTag)) return;
         if (!IsContactInUpperHalf(collision)) return;
 
-        m_upperHalfTriggered = true;
+        m_isUpperHalfTriggered = true;
         m_clothActor.enabled = true;
         m_collider.enabled = false;
         
@@ -57,10 +57,10 @@ public class ClothCollisionHandler : MonoBehaviour
         Color startColor = mat.GetColor(colorProp);
         float timeElapsed = 0f;
 
-        while (timeElapsed < fadeDuration)
+        while (timeElapsed < FadeDuration)
         {
             timeElapsed += Time.deltaTime;
-            float alpha = Mathf.Lerp(startColor.a, 0f, timeElapsed / fadeDuration);
+            float alpha = Mathf.Lerp(startColor.a, 0f, timeElapsed / FadeDuration);
             mat.SetColor(colorProp, new Color(startColor.r, startColor.g, startColor.b, alpha));
             yield return null;
         }

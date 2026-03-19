@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -6,53 +6,53 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 5f;
+    private float m_speed = 5f;
     [SerializeField]
-    private float _maxSpeed = 7f;
+    private float m_maxSpeed = 7f;
     [SerializeField]
-    private float _jumpForce = 5f;
+    private float m_jumpForce = 5f;
     [SerializeField]
-    private float _lookSensitivity = 0.5f;
+    private float m_lookSensitivity = 0.5f;
     [SerializeField]
-    private float _deceleration = 20f;
+    private float m_deceleration = 20f;
     [SerializeField]
-    private float _airDrag = 3f;
+    private float m_airDrag = 3f;
 
     [SerializeField]
-    private Transform _cameraTransform;
+    private Transform m_cameraTransform;
 
-    private Rigidbody _rb;
-    private Vector2 _moveInput;
-    private Vector2 _lookInput;
-    private float _xRotation = 0f;
+    private Rigidbody m_rb;
+    private Vector2 m_moveInput;
+    private Vector2 m_lookInput;
+    private float m_xRotation = 0f;
 
-    private bool _isGrounded = false;
-    private bool _isSliding = false;
-    private bool _isTouchingWall = false;
-    private Vector3 _steepNormal = Vector3.zero;
-    private Vector3 _groundNormal = Vector3.up;
-    private Vector3 _wallNormal = Vector3.zero;
+    private bool m_isGrounded;
+    private bool m_isSliding;
+    private bool m_isTouchingWall;
+    private Vector3 m_steepNormal = Vector3.zero;
+    private Vector3 m_groundNormal = Vector3.up;
+    private Vector3 m_wallNormal = Vector3.zero;
 
-    private const float _epsilon = 0.001f;
+    private const float k_Epsilon = 0.001f;
 
     void Start()
     {
-        _rb = GetComponent<Rigidbody>();
+        m_rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     private void Update()
     {
-        float mouseX = _lookInput.x * _lookSensitivity;
-        float mouseY = _lookInput.y * _lookSensitivity;
+        float mouseX = m_lookInput.x * m_lookSensitivity;
+        float mouseY = m_lookInput.y * m_lookSensitivity;
 
-        _xRotation -= mouseY;
-        _xRotation = Mathf.Clamp(_xRotation, -90f, 90f);
+        m_xRotation -= mouseY;
+        m_xRotation = Mathf.Clamp(m_xRotation, -90f, 90f);
 
-        if (_cameraTransform != null)
+        if (m_cameraTransform != null)
         {
-            _cameraTransform.localRotation = Quaternion.Euler(_xRotation, 0f, 0f);
+            m_cameraTransform.localRotation = Quaternion.Euler(m_xRotation, 0f, 0f);
         }
         transform.Rotate(Vector3.up * mouseX);
     }
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         Vector3 move =
-            _cameraTransform.forward * _moveInput.y + _cameraTransform.right * _moveInput.x;
+            m_cameraTransform.forward * m_moveInput.y + m_cameraTransform.right * m_moveInput.x;
         move.y = 0f;
         Vector3 moveDir = move.normalized;
 
@@ -68,77 +68,77 @@ public class PlayerController : MonoBehaviour
         {
             AdjustForSlope(ref moveDir);
 
-            if (_isTouchingWall && !_isGrounded)
+            if (m_isTouchingWall && !m_isGrounded)
             {
-                float dot = Vector3.Dot(moveDir, _wallNormal);
-                if (dot < 0) moveDir -= _wallNormal * dot;
-                if (moveDir.sqrMagnitude > _epsilon) moveDir.Normalize();
+                float dot = Vector3.Dot(moveDir, m_wallNormal);
+                if (dot < 0) moveDir -= m_wallNormal * dot;
+                if (moveDir.sqrMagnitude > k_Epsilon) moveDir.Normalize();
             }
 
-            if (_isGrounded) moveDir = Vector3.ProjectOnPlane(moveDir, _groundNormal).normalized;
+            if (m_isGrounded) moveDir = Vector3.ProjectOnPlane(moveDir, m_groundNormal).normalized;
 
-            _rb.AddForce(moveDir * _speed, ForceMode.VelocityChange);
+            m_rb.AddForce(moveDir * m_speed, ForceMode.VelocityChange);
         }
         else
         {
-            Vector3 hVel = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
-            hVel = Vector3.MoveTowards(hVel, Vector3.zero, _deceleration * Time.fixedDeltaTime);
-            _rb.velocity = new Vector3(hVel.x, _rb.velocity.y, hVel.z);
+            Vector3 hVel = new Vector3(m_rb.velocity.x, 0f, m_rb.velocity.z);
+            hVel = Vector3.MoveTowards(hVel, Vector3.zero, m_deceleration * Time.fixedDeltaTime);
+            m_rb.velocity = new Vector3(hVel.x, m_rb.velocity.y, hVel.z);
         }
 
-        if (!_isGrounded)
+        if (!m_isGrounded)
         {
-            Vector3 vel = _rb.velocity;
+            Vector3 vel = m_rb.velocity;
             float yVel = vel.y;
-            vel -= vel * _airDrag * Time.fixedDeltaTime;
+            vel -= vel * m_airDrag * Time.fixedDeltaTime;
             if (yVel < 0f) vel.y = yVel;
-            _rb.velocity = vel;
+            m_rb.velocity = vel;
         }
 
-        Vector3 horizontalVelocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
-        if (horizontalVelocity.magnitude > _maxSpeed)
+        Vector3 horizontalVelocity = new Vector3(m_rb.velocity.x, 0f, m_rb.velocity.z);
+        if (horizontalVelocity.magnitude > m_maxSpeed)
         {
-            horizontalVelocity = horizontalVelocity.normalized * _maxSpeed;
-            _rb.velocity = new Vector3(horizontalVelocity.x, _rb.velocity.y, horizontalVelocity.z);
+            horizontalVelocity = horizontalVelocity.normalized * m_maxSpeed;
+            m_rb.velocity = new Vector3(horizontalVelocity.x, m_rb.velocity.y, horizontalVelocity.z);
         }
 
-        _isGrounded = false;
-        _isSliding = false;
-        _isTouchingWall = false;
-        _groundNormal = Vector3.up;
-        _wallNormal = Vector3.zero;
+        m_isGrounded = false;
+        m_isSliding = false;
+        m_isTouchingWall = false;
+        m_groundNormal = Vector3.up;
+        m_wallNormal = Vector3.zero;
     }
 
     private void AdjustForSlope(ref Vector3 moveDir)
     {
-        if (!_isSliding) return;
+        if (!m_isSliding) return;
 
-        Vector3 horizontalNormal = new Vector3(_steepNormal.x, 0f, _steepNormal.z);
-        if (horizontalNormal.sqrMagnitude <= _epsilon) return;
+        Vector3 horizontalNormal = new Vector3(m_steepNormal.x, 0f, m_steepNormal.z);
+        if (horizontalNormal.sqrMagnitude <= k_Epsilon) return;
 
         horizontalNormal.Normalize();
         float dot = Vector3.Dot(moveDir, horizontalNormal);
         if (dot >= 0) return;
 
         moveDir -= horizontalNormal * dot;
-        if (moveDir.sqrMagnitude > _epsilon) moveDir.Normalize();
+        if (moveDir.sqrMagnitude > k_Epsilon) moveDir.Normalize();
     }
 
     public void OnMove(InputValue value)
     {
-        _moveInput = value.Get<Vector2>();
+        m_moveInput = value.Get<Vector2>();
     }
 
     public void OnLook(InputValue value)
     {
-        _lookInput = value.Get<Vector2>();
+        m_lookInput = value.Get<Vector2>();
     }
 
     public void OnJump(InputValue value)
     {
-        if (value.isPressed && _isGrounded)
+        if (value.isPressed && m_isGrounded)
         {
-            _rb.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
+            m_rb.AddForce(Vector3.up * m_jumpForce, ForceMode.VelocityChange);
         }
     }
 
@@ -150,18 +150,18 @@ public class PlayerController : MonoBehaviour
             float angle = Vector3.Angle(Vector3.up, normal);
             if (angle < 45f)
             {
-                _isGrounded = true;
-                _groundNormal = normal;
+                m_isGrounded = true;
+                m_groundNormal = normal;
             }
             else
             {
-                _isTouchingWall = true;
-                _wallNormal += normal;
+                m_isTouchingWall = true;
+                m_wallNormal += normal;
             }
         }
 
-        if (_isTouchingWall)
-            _wallNormal.Normalize();
+        if (m_isTouchingWall)
+            m_wallNormal.Normalize();
 
         if (collision.gameObject.CompareTag("Slideable"))
         {
@@ -171,7 +171,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        _isGrounded = false;
+        m_isGrounded = false;
     }
 
     private void HandleSlideable(Collision collision)
@@ -194,16 +194,16 @@ public class PlayerController : MonoBehaviour
         if (!hasSteepSlope) return;
 
         steepNormal.Normalize();
-        _isSliding = true;
-        _steepNormal = steepNormal;
+        m_isSliding = true;
+        m_steepNormal = steepNormal;
 
         Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, steepNormal).normalized;
 
-        _rb.AddForce(slideDirection * 20f, ForceMode.Acceleration);
+        m_rb.AddForce(slideDirection * 20f, ForceMode.Acceleration);
 
-        if (_rb.velocity.y > 0)
+        if (m_rb.velocity.y > 0)
         {
-            _rb.velocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
+            m_rb.velocity = new Vector3(m_rb.velocity.x, 0f, m_rb.velocity.z);
         }
     }
 

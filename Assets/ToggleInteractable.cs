@@ -3,21 +3,21 @@ using UnityEngine;
 
 public class ToggleInteractable : DistanceInteractable
 {
-    public GameObject fluidObject;
-    public GameObject normalObject;
-    public float fadeDuration = 5f;
+    [SerializeField] public GameObject FluidObject;
+    [SerializeField] public GameObject NormalObject;
+    [SerializeField] public float FadeDuration = 5f;
 
     protected override void Start()
     {
         base.Start();
-        fluidObject.SetActive(false);
-        normalObject.SetActive(true);
+        FluidObject.SetActive(false);
+        NormalObject.SetActive(true);
     }
 
     public override void OnInteract()
     {
-        fluidObject.SetActive(true);
-        normalObject.SetActive(false);
+        FluidObject.SetActive(true);
+        NormalObject.SetActive(false);
         StartCoroutine(FadeOut());
     }
 
@@ -34,10 +34,10 @@ public class ToggleInteractable : DistanceInteractable
         Color startColor = mat.GetColor(colorProp);
         float timeElapsed = 0f;
 
-        while (timeElapsed < fadeDuration)
+        while (timeElapsed < FadeDuration)
         {
             timeElapsed += Time.deltaTime;
-            float alpha = Mathf.Lerp(startColor.a, 0f, timeElapsed / fadeDuration);
+            float alpha = Mathf.Lerp(startColor.a, 0f, timeElapsed / FadeDuration);
             mat.SetColor(colorProp, new Color(startColor.r, startColor.g, startColor.b, alpha));
             yield return null;
         }

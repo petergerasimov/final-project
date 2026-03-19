@@ -1,44 +1,45 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Renderer))]
 public class DistanceInteractable : MonoBehaviour
 {
-    public float displayDistance = 4f;
-    public KeyCode promptKey = KeyCode.E;
-    public Vector3 offset = Vector3.zero;
-    public string targetTag = "Player";
-    public MonoBehaviour scriptToToggle;
-    public AudioClip interactSound;
+    public float DisplayDistance = 4f;
+    public KeyCode PromptKey = KeyCode.E;
+    public Vector3 Offset = Vector3.zero;
+    public string TargetTag = "Player";
+    public MonoBehaviour ScriptToToggle;
+    public AudioClip InteractSound;
 
-    protected Transform _playerTransform;
-    protected Camera _mainCamera;
-    protected Renderer _renderer;
+    protected Transform m_playerTransform;
+    protected Camera m_mainCamera;
+    protected Renderer m_renderer;
 
     protected virtual void Start()
     {
-        _mainCamera = Camera.main;
-        GameObject[] players = GameObject.FindGameObjectsWithTag(targetTag);
+        m_mainCamera = Camera.main;
+        GameObject[] players = GameObject.FindGameObjectsWithTag(TargetTag);
         foreach (GameObject player in players)
         {
             if (player.activeSelf == false) continue;
-            _playerTransform = player.transform;
+            m_playerTransform = player.transform;
             break;
         }
-        _renderer = GetComponent<Renderer>();
+        m_renderer = GetComponent<Renderer>();
     }
 
     protected virtual void Update()
     {
-        if (_playerTransform == null) return;
+        if (m_playerTransform == null) return;
 
-        Vector3 targetPosition = _renderer.bounds.center;
+        Vector3 targetPosition = m_renderer.bounds.center;
 
-        float distance = Vector3.Distance(targetPosition, _playerTransform.position);
-        if (distance > displayDistance) return;
+        float distance = Vector3.Distance(targetPosition, m_playerTransform.position);
+        if (distance > DisplayDistance) return;
 
-        if (Input.GetKeyDown(promptKey)) {
-            if (scriptToToggle != null) scriptToToggle.enabled = !scriptToToggle.enabled;
-            if (interactSound != null) AudioManager.Instance.PlaySound(interactSound);
+        if (Input.GetKeyDown(PromptKey)) {
+            if (ScriptToToggle != null) ScriptToToggle.enabled = !ScriptToToggle.enabled;
+            if (InteractSound != null) AudioManager.Instance.PlaySound(InteractSound);
             OnInteract();
         }
     }
@@ -48,14 +49,14 @@ public class DistanceInteractable : MonoBehaviour
     }
     protected virtual void OnGUI()
     {
-        if (_playerTransform == null || _mainCamera == null) return;
+        if (m_playerTransform == null || m_mainCamera == null) return;
 
-        Vector3 targetPosition = _renderer.bounds.center;
+        Vector3 targetPosition = m_renderer.bounds.center;
 
-        float distance = Vector3.Distance(targetPosition, _playerTransform.position);
-        if (distance > displayDistance) return;
+        float distance = Vector3.Distance(targetPosition, m_playerTransform.position);
+        if (distance > DisplayDistance) return;
 
-        Vector3 screenPos = _mainCamera.WorldToScreenPoint(targetPosition + offset);
+        Vector3 screenPos = m_mainCamera.WorldToScreenPoint(targetPosition + Offset);
 
         if (screenPos.z <= 0) return;
 
@@ -74,6 +75,6 @@ public class DistanceInteractable : MonoBehaviour
         GUI.Box(rect, GUIContent.none);
 
         GUI.color = oldColor;
-        GUI.Box(rect, promptKey.ToString(), boxStyle);
+        GUI.Box(rect, PromptKey.ToString(), boxStyle);
     }
 }

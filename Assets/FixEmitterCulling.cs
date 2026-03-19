@@ -5,19 +5,19 @@ using UnityEngine;
 [RequireComponent(typeof(Renderer))]
 public class FixEmitterCulling : MonoBehaviour
 {
-    private Renderer m_Renderer;
-    private Bounds m_MassiveBounds;
+    private Renderer m_renderer;
+    private Bounds m_massiveBounds;
 
     void Start()
     {
-        m_Renderer = GetComponent<Renderer>();
-        m_MassiveBounds = new Bounds(Vector3.zero, new Vector3(10000000.0f, 10000000.0f, 10000000.0f));
+        m_renderer = GetComponent<Renderer>();
+        m_massiveBounds = new Bounds(Vector3.zero, new Vector3(10000000.0f, 10000000.0f, 10000000.0f));
     }
 
     void Update()
     {
-        if (m_Renderer == null) return;
+        if (m_renderer == null) return;
         
-        m_Renderer.bounds = m_MassiveBounds;
+        m_renderer.bounds = m_massiveBounds;
     }
 }

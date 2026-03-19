@@ -2,29 +2,29 @@ using UnityEngine;
 
 public class PlayerOnlyCollider : MonoBehaviour
 {
-    [SerializeField] private string playerTag = "Player";
+    [SerializeField] private string m_playerTag = "Player";
 
-    private Collider _collider;
-    private GameObject _player;
+    private Collider m_collider;
+    private GameObject m_player;
 
     private void Awake()
     {
-        _collider = GetComponent<Collider>();
+        m_collider = GetComponent<Collider>();
 
-        GameObject[] players = GameObject.FindGameObjectsWithTag(playerTag);
+        GameObject[] players = GameObject.FindGameObjectsWithTag(m_playerTag);
         foreach (GameObject player in players)
         {
             if (!player.activeSelf) continue;
 
-            _player = player;
+            m_player = player;
             break;
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject == _player) return;
+        if (collision.gameObject == m_player) return;
 
-        Physics.IgnoreCollision(_collider, collision.collider, true);
+        Physics.IgnoreCollision(m_collider, collision.collider, true);
     }
 }

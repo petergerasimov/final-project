@@ -6,14 +6,14 @@ using UnityEngine.UI;
 
 public class DoorLoader : DistanceInteractable
 {
-    public List<GameObject> scenes;
-    public int currentSceneIndex = 0;
+    public List<GameObject> Scenes;
+    public int CurrentSceneIndex = 0;
 
-    private bool _isLoading = false;
+    private bool m_isLoading;
 
     public override void OnInteract()
     {
-        if (_isLoading) return;
+        if (m_isLoading) return;
         StartCoroutine(LoadNextScene());
     }
 
@@ -24,12 +24,12 @@ public class DoorLoader : DistanceInteractable
 
     private IEnumerator LoadNextScene()
     {
-        if (scenes == null || scenes.Count == 0)
+        if (Scenes == null || Scenes.Count == 0)
         {
             Debug.LogWarning("DoorLoader: scenes list is empty");
             yield break;
         }
-        _isLoading = true;
+        m_isLoading = true;
 
         GameObject canvasGameObj = new GameObject("LoadingScreenCanvas");
         Canvas canvas = canvasGameObj.AddComponent<Canvas>();
@@ -65,12 +65,12 @@ public class DoorLoader : DistanceInteractable
         textRect.anchoredPosition = new Vector2(-50, 50);
         textRect.sizeDelta = new Vector2(400, 100);
 
-        scenes[currentSceneIndex].SetActive(false);
-        currentSceneIndex = (currentSceneIndex + 1) % scenes.Count;
-        scenes[currentSceneIndex].SetActive(true);
+        Scenes[CurrentSceneIndex].SetActive(false);
+        CurrentSceneIndex = (CurrentSceneIndex + 1) % Scenes.Count;
+        Scenes[CurrentSceneIndex].SetActive(true);
         // ResetPhysX();
 
         Destroy(canvasGameObj);
-        _isLoading = false;
+        m_isLoading = false;
     }
 }
