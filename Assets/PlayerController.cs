@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     private float _jumpForce = 5f;
     [SerializeField]
     private float _lookSensitivity = 0.5f;
+    [SerializeField]
+    private float _deceleration = 20f;
 
     [SerializeField]
     private Transform _cameraTransform;
@@ -21,6 +23,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 _lookInput;
     private float _xRotation = 0f;
 
+    private bool _isGrounded = false;
     private bool _isSliding = false;
     private Vector3 _steepNormal = Vector3.zero;
 
@@ -60,6 +63,12 @@ public class PlayerController : MonoBehaviour
             AdjustForSlope(ref moveDir);
             _rb.AddForce(moveDir * _speed, ForceMode.VelocityChange);
         }
+        else
+        {
+            Vector3 hVel = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
+            hVel = Vector3.MoveTowards(hVel, Vector3.zero, _deceleration * Time.fixedDeltaTime);
+            _rb.velocity = new Vector3(hVel.x, _rb.velocity.y, hVel.z);
+        }
 
         Vector3 horizontalVelocity = new Vector3(_rb.velocity.x, 0f, _rb.velocity.z);
         if (horizontalVelocity.magnitude > _maxSpeed)
@@ -68,6 +77,7 @@ public class PlayerController : MonoBehaviour
             _rb.velocity = new Vector3(horizontalVelocity.x, _rb.velocity.y, horizontalVelocity.z);
         }
 
+        _isGrounded = false;
         _isSliding = false;
     }
 
@@ -98,7 +108,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
-        if (value.isPressed && Mathf.Abs(_rb.velocity.y) < _epsilon)
+        if (value.isPressed && _isGrounded)
         {
             _rb.AddForce(Vector3.up * _jumpForce, ForceMode.VelocityChange);
         }
@@ -106,9 +116,29 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
-        if (!collision.gameObject.CompareTag("Slideable")) return;
+        for (int i = 0; i < collision.contactCount; i++)
+        {
+            float angle = Vector3.Angle(Vector3.up, collision.GetContact(i).normal);
+            if (angle < 45f)
+            {
+                _isGrounded = true;
+                break;
+            }
+        }
 
+        if (collision.gameObject.CompareTag("Slideable"))
+        {
+            HandleSlideable(collision);
+        }
+    }
 
+    private void OnCollisionExit(Collision collision)
+    {
+        _isGrounded = false;
+    }
+
+    private void HandleSlideable(Collision collision)
+    {
         Vector3 steepNormal = Vector3.zero;
         bool hasSteepSlope = false;
 
