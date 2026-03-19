@@ -1,31 +1,33 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(100)]
 public class FreezingToggle : MonoBehaviour
 {
     private FreezingEffect m_freezingEffect;
-    private FreezingPostProcess m_postProcess;
+    private MonoBehaviour m_endScreenInteractable;
 
     private void Awake()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
         {
-            if (!player.activeSelf) continue;
+            if (!player.activeInHierarchy) continue;
             m_freezingEffect = player.GetComponent<FreezingEffect>();
-            m_postProcess = player.GetComponent<FreezingPostProcess>();
             break;
         }
+        GameObject door = GameObject.Find("ExitDoor");
+        m_endScreenInteractable = door.GetComponent<MonoBehaviour>();
     }
 
     private void OnEnable()
     {
         if (m_freezingEffect != null) m_freezingEffect.enabled = true;
-        if (m_postProcess != null) m_postProcess.enabled = true;
+        if (m_endScreenInteractable != null) m_endScreenInteractable.enabled = false;
     }
 
     private void OnDisable()
     {
         if (m_freezingEffect != null) m_freezingEffect.enabled = false;
-        if (m_postProcess != null) m_postProcess.enabled = false;
+        if (m_endScreenInteractable != null) m_endScreenInteractable.enabled = true;
     }
 }

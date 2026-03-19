@@ -6,6 +6,7 @@ public class DeathScreen : MonoBehaviour
     private Texture2D m_backgroundTexture;
     private Texture2D m_buttonNormalTexture;
     private Texture2D m_buttonHoverTexture;
+    private string m_message = "YOU FROZE";
 
     private void Start()
     {
@@ -17,8 +18,9 @@ public class DeathScreen : MonoBehaviour
         m_buttonHoverTexture = MakeOutlineTexture(200, 50, Color.yellow, Color.clear);
     }
 
-    public void Show()
+    public void Show(string message = "YOU FROZE")
     {
+        m_message = message;
         m_isShowing = true;
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
@@ -48,7 +50,7 @@ public class DeathScreen : MonoBehaviour
         titleStyle.normal.textColor = Color.white;
         titleStyle.alignment = TextAnchor.MiddleCenter;
 
-        GUI.Label(new Rect(startX - 50f, startY, buttonWidth + 100f, titleHeight), "YOU FROZE", titleStyle);
+        GUI.Label(new Rect(startX - 50f, startY, buttonWidth + 100f, titleHeight), m_message, titleStyle);
 
         float buttonsStartY = startY + titleHeight + spacing;
         Rect exitRect = new Rect(startX, buttonsStartY, buttonWidth, buttonHeight);

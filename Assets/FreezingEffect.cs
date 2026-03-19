@@ -22,6 +22,23 @@ public class FreezingEffect : MonoBehaviour
         if (mainCamera != null)
         {
             m_postProcess = mainCamera.gameObject.AddComponent<FreezingPostProcess>();
+            m_postProcess.enabled = this.enabled;
+        }
+    }
+
+    private void OnEnable()
+    {
+        if (m_postProcess != null)
+        {
+            m_postProcess.enabled = true;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (m_postProcess != null)
+        {
+            m_postProcess.enabled = false;
         }
 
         m_deathScreen = GameObject.Find("Menu").GetComponent<DeathScreen>();

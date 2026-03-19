@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody))]
+[DefaultExecutionOrder(-100)]
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class FreezingPostProcess : MonoBehaviour
@@ -9,12 +10,15 @@ public class FreezingPostProcess : MonoBehaviour
         get { return m_material; }
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        Shader shader = Shader.Find("Custom/FreezingVignette");
-        if (shader != null && shader.isSupported)
+        if (m_material == null)
         {
-            m_material = new Material(shader);
+            Shader shader = Shader.Find("Custom/FreezingVignette");
+            if (shader != null && shader.isSupported)
+            {
+                m_material = new Material(shader);
+            }
         }
     }
 
@@ -30,8 +34,17 @@ public class FreezingPostProcess : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        if (m_material == null) return;
+        Destroy(m_material);
+        m_material = null;
+    }
+
     private void OnDestroy()
     {
-        if (m_material != null) Destroy(m_material);
+        if (m_material == null) return;
+        Destroy(m_material);
+        m_material = null;
     }
 }
