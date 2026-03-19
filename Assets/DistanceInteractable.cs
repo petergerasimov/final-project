@@ -7,6 +7,7 @@ public class DistanceInteractable : MonoBehaviour
     public KeyCode promptKey = KeyCode.E;
     public Vector3 offset = Vector3.zero;
     public string targetTag = "Player";
+    public MonoBehaviour scriptToToggle;
 
     protected Transform _playerTransform;
     protected Camera _mainCamera;
@@ -34,7 +35,10 @@ public class DistanceInteractable : MonoBehaviour
         float distance = Vector3.Distance(targetPosition, _playerTransform.position);
         if (distance > displayDistance) return;
 
-        if (Input.GetKeyDown(promptKey)) OnInteract();
+        if (Input.GetKeyDown(promptKey)) {
+            if (scriptToToggle != null) scriptToToggle.enabled = !scriptToToggle.enabled;
+            OnInteract();
+        }
     }
 
     public virtual void OnInteract()
