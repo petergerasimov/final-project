@@ -40,12 +40,6 @@ public class FreezingEffect : MonoBehaviour
         {
             m_postProcess.enabled = false;
         }
-
-        m_deathScreen = GameObject.Find("Menu").GetComponent<DeathScreen>();
-        if (m_deathScreen == null)
-        {
-            Debug.LogWarning("FreezingEffect: death screen not found");
-        }
     }
 
     private void Update()
