@@ -14,7 +14,12 @@ public class FreezingPostProcess : MonoBehaviour
     {
         if (m_material == null)
         {
-            Shader shader = Shader.Find("Custom/FreezingVignette");
+            Shader shader = Resources.Load<Shader>("FreezingVignette");
+            if (shader == null)
+            {
+                shader = Shader.Find("Custom/FreezingVignette");
+            }
+            
             if (shader != null && shader.isSupported)
             {
                 m_material = new Material(shader);

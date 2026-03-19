@@ -11,7 +11,7 @@ public class FreezingToggle : MonoBehaviour
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
         {
-            if (!player.activeInHierarchy) continue;
+            if (!player.activeSelf) continue;
             m_freezingEffect = player.GetComponent<FreezingEffect>();
             break;
         }
