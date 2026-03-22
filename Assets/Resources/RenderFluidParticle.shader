@@ -1,4 +1,8 @@
-// altered DebugParticleRenderer to fix lighting
+/*
+ * Credits to Yafei Ou, this is mostly the DebugParticleRendering.shader
+ * Also to Hugo Elias for the integer hash function
+ * I added the second pass and the ball coloring
+ */
 
 Shader "PhysX 5 for Unity/Screen Space Particle"
 {
@@ -44,6 +48,7 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
     
             struct v2g {};
             
+            // Hugo Elias's integer hash function
             float hash11(uint n)
             {
                 n = (n << 13U) ^ n;
@@ -238,6 +243,7 @@ Shader "PhysX 5 for Unity/Screen Space Particle"
     
             struct v2g {};
             
+            // Hugo Elias's integer hash function
             float hash11(uint n)
             {
                 n = (n << 13U) ^ n;
