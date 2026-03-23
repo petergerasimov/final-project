@@ -2,3 +2,5 @@ Hello, If you want to compile the project you need to go to https://github.com/p
 I tried making it as a Unity package from git, but the binaries are just too large, and GitHub doesn't allow it.
 
 There is a compiled version in the Releases tab if you want to try the game, but you need an NVIDIA graphics card.
+
+Code in root of Assets/ and Assets/Resources was created for this project; some of the other folders in Assets/ contain third-party code
